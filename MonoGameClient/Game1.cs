@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Input;
 using Sprites;
 using Microsoft.Xna.Framework.Audio;
 using CameraNS;
+using GameData;
+
+using System.Linq;
 
 namespace MonoGameClient
 {
@@ -18,8 +21,10 @@ namespace MonoGameClient
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        //For communicating with the server
         HubConnection serverConnection;
         IHubProxy proxy;
+
         Vector2 worldCoords;
         SpriteFont messageFont;
         Texture2D backGround;
@@ -99,7 +104,20 @@ namespace MonoGameClient
                         }, new SoundEffect[] { }, GraphicsDevice.Viewport.Bounds.Center.ToVector2(),
                         8, 0, 5.0f);
 
-
+            proxy.Invoke<PlayerData>("JoinPlayer", new Position {X = GraphicsDevice.Viewport.Bounds.Center.X,
+                                                                 Y = GraphicsDevice.Viewport.Bounds.Center.Y})
+                .ContinueWith(
+                (p) => {
+                    if (p.Result == null)
+                        connectionMessage = "No player data returned";
+                    else
+                    {
+                        Player player;
+                        player = (Player)Components.FirstOrDefault(pl => pl.GetType() == typeof(Player));
+                        if (p != null)
+                            player.playerData = p.Result;
+                    }
+                });
         }
 
         /// <summary>

@@ -27,7 +27,7 @@ namespace Sprites
         SoundEffect[] _directionSounds;
         SoundEffectInstance _soundPlayer;
         SpriteFont font;
-        public PlayerData playerData;
+        public GameData.PlayerData playerData;
         Position oldPosition;
 
         public int Score
@@ -37,7 +37,7 @@ namespace Sprites
         }
         int _health;
         public int Health { get { return _health; } set { _health = value; } }
-
+        
         public Player(Game game, Texture2D[] tx, SoundEffect[] sounds,
             Vector2 pos, int frameCount, 
             int startScore, float speed) 
@@ -50,7 +50,7 @@ namespace Sprites
             _directionSounds = sounds;
             _health = 100;
             // link in the playerData. Eventually this will be created on the server and sent down.
-            playerData = new PlayerData { playerPosition = new Position { X = (int)pos.X, Y = (int)pos.Y } };
+            playerData = new GameData.PlayerData { playerPosition = new Position { X = (int)pos.X, Y = (int)pos.Y } };
             oldPosition = playerData.playerPosition;
 
         }
@@ -86,8 +86,14 @@ namespace Sprites
             SpriteImage = _textures[(int)_direction];
             // Update internal player data for messages
             oldPosition = playerData.playerPosition;
-            playerData = new PlayerData { playerPosition = new Position { X = (int)Position.X, Y = (int)Position.Y } };
+            playerData.playerPosition = new Position { X = (int)Position.X, Y = (int)Position.Y};
             
+        }
+
+        //This is for the exercise to display their name above their head
+        public override void Draw(GameTime gameTime)
+        {
+            base.Draw(gameTime);
         }
     }
 }
